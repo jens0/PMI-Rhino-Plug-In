@@ -12,7 +12,7 @@ using Rhino.Commands;
 
 namespace MyProject1
 {
-    [System.Runtime.InteropServices.Guid("99999999-8888-7777-6666-555555555555")]
+    [System.Runtime.InteropServices.Guid("19cfc46f-aa74-4779-898a-7c6211592846")]
     public class pmi : Command
     {
         public pmi() { }
@@ -23,12 +23,12 @@ namespace MyProject1
             if (Rhino.UI.Panels.IsPanelVisible(panelid))
             {
                 Rhino.UI.Panels.ClosePanel(panelid);
-                RhinoApp.WriteLine("panel is now hidden");
+                RhinoApp.WriteLine("panel off");
             }
             else
             {
                 Rhino.UI.Panels.OpenPanel(panelid);
-                RhinoApp.WriteLine("panel is now visible");
+                RhinoApp.WriteLine("panel on");
             }
             return Result.Success;
         }

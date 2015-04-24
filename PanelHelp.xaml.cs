@@ -21,7 +21,7 @@ namespace MyProject1
         public PanelHelp()
         {
             InitializeComponent();
-            this.Resources.Add("about", myp.about);
+            this.Resources.Add("about", my.about);
         }
 
         private void navHyperlink(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -30,12 +30,6 @@ namespace MyProject1
             e.Handled = true;
         }
 
-#if testing
-#warning testing@PanelHelp
-        private void Window_FocusableChanged(object sender, RoutedEventArgs e)
-        {
-            RhinoApp.WriteLine("Focus");
-        }
-#endif
+        void OK(object sender, RoutedEventArgs e) { DialogResult = true; }
     }
 }

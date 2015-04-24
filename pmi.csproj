@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;showboxOFF calcvaluesOFF testingOFF</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;showboxOFF testingOFF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
@@ -64,13 +64,14 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="kmlObject.cs" />
     <Compile Include="pmiExtWrite.cs" />
     <Compile Include="kmlUserData.cs" />
     <Compile Include="pmiAddStorey.cs" />
     <Compile Include="pmiExtRead.cs" />
     <Compile Include="pmi.cs" />
     <Compile Include="pmiSave.cs" />
-    <Compile Include="PlugIn.cs" />
+    <Compile Include="pmiOpen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Panel.xaml.cs">
       <DependentUpon>Panel.xaml</DependentUpon>
@@ -83,6 +84,9 @@
     <Compile Include="PanelHelp.xaml.cs">
       <DependentUpon>PanelHelp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PanelOptions.xaml.cs">
+      <DependentUpon>PanelOptions.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Panel.xaml">
@@ -90,6 +94,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PanelHelp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PanelOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PanelStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -133,5 +145,6 @@ Erase "$(TargetPath)"</PostBuildEvent>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 </Project>

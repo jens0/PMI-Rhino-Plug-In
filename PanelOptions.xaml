@@ -1,0 +1,223 @@
+﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015 QUT -->
+<Window
+    x:Class="MyProject1.PanelOptions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Icon="Properties/icon64.png"
+    Title="Options"
+    WindowStartupLocation="CenterScreen"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    Topmost="True"
+    ShowInTaskbar="False">
+    <Window.Resources>
+        <ResourceDictionary Source="PanelStyle.xaml"/>
+    </Window.Resources>
+
+    <Grid Background="#f0f0f0" Width="420">
+        <StackPanel Background="#f0f0f0" Margin="24,18,24,59">
+            <TextBlock Text="        general"                   FontFamily="Segoe Print" Background="#f8f8f8"/>
+            <!--automatic read/write-->
+            <CheckBox  Margin="5,5,0,0"    IsChecked="{Binding automatic}"    ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="automatic read/write">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> read/write extended data of building on select/deselect events at rhino viewport.<LineBreak/>
+                            <Italic>unchecked:</Italic> read/write by using buttons designed for this purpose located at pmi panel.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <TextBlock><Italic>note:</Italic> the automatic read/write mode is not yet fully operational.</TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+            <!--asterisk building-->
+            <CheckBox  Margin="5,0,0,0"    IsChecked="{Binding showasterisk}" ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="asterisk building">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            asterisk last valid building that was focused by pmi.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <TextBlock><Italic>tip:</Italic> this option can be helpful in non automatic read/write mode.</TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+            <!--show debug-->
+            <CheckBox  Margin="5,0,0,25"   IsChecked="{Binding showdebug}"    ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="show debug" ToolTip="provide information for further diagnostics in the rhino prompt."/>
+
+            <TextBlock Text="        open/import kml file"      FontFamily="Segoe Print" Background="#f8f8f8"/>
+            <!--color by land use type-->
+            <CheckBox  Margin="5,5,0,0"    IsChecked="{Binding colorbytype}"  ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="color by land use type">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> color building by land use type.<LineBreak/>
+                            <Italic>unchecked:</Italic> keep original color as defined in kml file.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <TextBlock><Italic>note:</Italic> the color you choose will be used for the kml file to be written.</TextBlock>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>info:</Italic> the land use type is defined in the extended data </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Type</TextBlock>
+                            <TextBlock>.</TextBlock>
+                        </WrapPanel>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+            <!--adjust elevation-->
+            <WrapPanel>
+                <CheckBox Margin="5,0,0,0" IsChecked="{Binding setelevation}" ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                    Style="{StaticResource CheckBoxStyle}" Content="adjust elevation:">
+                    <CheckBox.ToolTip>
+                        <StackPanel>
+                            <TextBlock>adjust elevation by adding value to given elevation.</TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                            <TextBlock><Italic>note:</Italic> type a value or drag the slider.</TextBlock>
+                            <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>info:</Italic> the building's elevation is defined in the extended data </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Elevation</TextBlock>
+                            <TextBlock>.</TextBlock>
+                        </WrapPanel>
+                        </StackPanel>
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <TextBox Margin="0,7,0,0" Text="{Binding Path=newelevation, UpdateSourceTrigger=PropertyChanged}" Name="enterelevation" MaxLength="20"
+                         VerticalAlignment="Top" Background="#f8f8f8" BorderThickness="0" ToolTip="type the value in meter here"/>
+                <TextBlock Margin="0,7,0,0" xml:space="preserve"> meter</TextBlock>
+            </WrapPanel>
+            <Slider Margin="34,0,14,0"     Value="{Binding newmelevation}"    ToolTipService.ShowDuration="60000"
+                    Thumb.DragStarted="dragStarted" Thumb.DragCompleted="dragCompleted" ValueChanged="valueChanged"
+                    MouseLeftButtonDown="mouseLeftButtonDown" MouseLeftButtonUp="mouseLeftButtonUp"
+                    Name="slider" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="2"
+                    Minimum="-50" Maximum="50" TickFrequency="0.5" IsSnapToTickEnabled="True">
+                <!--<Slider.ToolTip>
+                    <ToolTip Content="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.Value}"
+                       ContentStringFormat="{}{0:F2} m"/>
+                </Slider.ToolTip>-->
+            </Slider>
+            <!--proper display modes-->
+            <CheckBox  Margin="5,0,0,0"  IsChecked="{Binding setdisplaymode}" ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="proper display modes">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> use proper display modes on viewports.<LineBreak/>
+                            <Italic>unchecked:</Italic> default display mode by rhino is <Italic>wireframe</Italic>.
+                        </TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+            <!--proper zoom-->
+            <CheckBox  Margin="5,0,0,25"   IsChecked="{Binding setzoom}"      ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" Content="proper zoom">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> use proper zoom on viewports.<LineBreak/>
+                            <Italic>unchecked:</Italic> no zoom.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <TextBlock><Italic>note:</Italic> this option is not used for kml file <Italic>import</Italic>.</TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+
+            <TextBlock Text="        save kml file"             FontFamily="Segoe Print" Background="#f8f8f8"/>
+            <!--add Name-->
+            <CheckBox  Margin="5,5,0,0"    IsChecked="{Binding createname}"   ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" IsThreeState="True">
+                <CheckBox.Content>
+                    <WrapPanel xml:space="preserve">
+                        <TextBlock>add </TextBlock>
+                        <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="#606060">Name</TextBlock>
+                    </WrapPanel>
+                </CheckBox.Content>
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>checked:</Italic> add extended data </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Name</TextBlock>
+                            <TextBlock> by gathering information from building's properties.</TextBlock>
+                        </WrapPanel>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>intermediate:</Italic> update </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Name</TextBlock>
+                            <TextBlock> if available.</TextBlock>
+                        </WrapPanel>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>unchecked:</Italic> adopt </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Name</TextBlock>
+                            <TextBlock> without updating.</TextBlock>
+                        </WrapPanel>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>note:</Italic> if this option is checked and </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Name</TextBlock>
+                            <TextBlock> already exists, </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Name</TextBlock>
+                            <TextBlock> just will be updated.</TextBlock>
+                        </WrapPanel>
+                        <TextBlock><Italic>note:</Italic> this option has only effect on the kml file to be written.</TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+            <!--add geometric data-->
+            <CheckBox  Margin="5,0,0,0"    IsChecked="{Binding creategeom}"   ToolTipService.ShowDuration="90000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" IsThreeState="True" Content="add geometric data">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> add data that describes the building's geometry.<LineBreak/>
+                            <Italic>intermediate:</Italic> update geometric data if available.<LineBreak/>
+                            <Italic>unchecked:</Italic> adopt geometric data without updating.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <WrapPanel xml:space="preserve">
+                            <TextBlock><Italic>note:</Italic> the geometric data that currently are supported are </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Perimeter</TextBlock>
+                            <TextBlock>, </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">GSASpaceAr</TextBlock>
+                            <TextBlock>, </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">FPA</TextBlock>
+                            <TextBlock> and </TextBlock>
+                            <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">GFA</TextBlock>
+                            <TextBlock>.</TextBlock>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <TextBlock><Italic>note:</Italic></TextBlock>
+                            <StackPanel xml:space="preserve">
+                                <WrapPanel>
+                                    <TextBlock> the data </TextBlock>
+                                    <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Elevation</TextBlock>
+                                    <TextBlock> and </TextBlock>
+                                    <TextBlock Margin="0,2,0,0" FontFamily="Consolas" FontWeight="Bold" Foreground="Gray">Height</TextBlock>
+                                    <TextBlock> are required to keep up the building's geometry and therefore</TextBlock>
+                                </WrapPanel>
+                                <TextBlock> they will be added regardless of this option insofar as elevation or height are not zero.</TextBlock>
+                            </StackPanel>
+                        </WrapPanel>
+                        <TextBlock>
+                            <Italic>note:</Italic> if this option is checked and the data already exist, the data just will be updated.<LineBreak/>
+                            <Italic>note:</Italic> this option has only effect on the kml file to be written.
+                        </TextBlock>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
+        </StackPanel>
+
+        <Button Content="Cancel"           IsCancel="True"  FontFamily="Franklin Gothic"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,111,18" Width="75" Height="23"/>
+        <Button Content="OK" Click="OK"    IsDefault="True" FontFamily="Franklin Gothic"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0, 24,18" Width="75" Height="23"/>
+        <!--
+        <Button Content="Test" Click="Test"                 FontFamily="Franklin Gothic"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="24,0, 0,18" Width="75" Height="23"/>-->
+    </Grid>
+</Window>

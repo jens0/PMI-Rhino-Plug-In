@@ -1,74 +1,59 @@
 ﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015 QUT -->
-<UserControl x:Class="MyProject1.Panel"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="250">
+<UserControl
+    x:Class="MyProject1.Panel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignHeight="400" d:DesignWidth="250">
+    <UserControl.Resources>
+        <ResourceDictionary Source="PanelStyle.xaml"/>
+    </UserControl.Resources>
+
     <Grid x:Name="panel">
+        <Button Content="Help"          Click="HelpCl"      FontFamily="Franklin Gothic"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"  Width="50" Height="23"/>
+        <Button Content="Options"       Click="OptionsCl"   FontFamily="Franklin Gothic"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,70,12"  Width="60" Height="23"/>
 
-        <Button Content="Help"          Click="HelpCl"      FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,24,12"  Width="75" Height="23"/>
-
-        <!--<CheckBox  Checked="calculate_Checked" Unchecked="calculate_Unchecked" IsChecked="False"
-                HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="12,0,104,12">
-            <TextBlock TextWrapping="WrapWithOverflow">calculate Perimeter and GSASpaceAr</TextBlock></CheckBox>-->
-
-        <ListBox   Background="#7ff8f8f8"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,12,12,0"  Width="99" Height="129"/>
+        <Border Background="#80d0d6e2" BorderBrush="#80546480" BorderThickness="0.5" CornerRadius="5"
+                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,12,12,0"  Width="87" Height="126"/>
         <TextBlock Text="kml file"   TextAlignment="Center" FontFamily="Segoe Print"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,14,12,0"  Width="99"/>
-        <Button Content="Open"          Click="OpenCl"      FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,36,24,0"  Width="75" Height="23"/>
-        <Button Content="Import"        Click="ImportCl"    FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,71,24,0"  Width="75" Height="23"/>
-        <Button Content="Save"          Click="SaveCl"      FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,106,24,0" Width="75" Height="23"/>
+                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,14,12,0"  Width="87"/>
+        <Button Content="Open"          Click="OpenCl"      FontFamily="Franklin Gothic"
+                Background="#ebeff7" BorderBrush="#c7e5f7" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,36,18,0"  Width="75" Height="23"/>
+        <Button Content="Import"        Click="ImportCl"    FontFamily="Franklin Gothic"
+                Background="#ebeff7" BorderBrush="#c7e5f7" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,71,18,0"  Width="75" Height="23"/>
+        <Button Content="Save"          Click="SaveCl"      FontFamily="Franklin Gothic"
+                Background="#ebeff7" BorderBrush="#c7e5f7" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,106,18,0" Width="75" Height="23"/>
 
-        
-        <!--<ListBox   Background="#7ff8f8f8"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="12,12,0,0"  Width="99" Height="94"/>-->
-        <ListBox   Background="#7ff8f8f8"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="12,12,0,0"  Width="99" Height="59"/>
+
+        <Border Background="#80d0d6e2" BorderBrush="#80546480" BorderThickness="0.5" CornerRadius="5"
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="12,12,0,0"  Width="87" Height="56"/>
         <TextBlock Text="building"   TextAlignment="Center" FontFamily="Segoe Print"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="12,14,0,0"  Width="99"/>
-        <Button Content="Add Storey"    Click="AddStoreyCl" FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,36,0,0"  Width="75" Height="23"/>
-        <!--<Button Content="Show ExtData"  Click="ExtenDataCl" FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,71,0,0"  Width="75" Height="23"/>-->
- 
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="12,14,0,0"  Width="87"/>
+        <Button Content="Add Storey"    Click="AddStoreyCl" FontFamily="Franklin Gothic"
+                Background="#ebeff7" BorderBrush="#c7e5f7" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="18,36,0,0"  Width="75" Height="23"/>
 
-
-        <ListBox   Background="#7ff8f8f8"
-                HorizontalAlignment="Stretch" VerticalAlignment="Top"  Margin="12,153,12,0"           Height="25"/>
-        <TextBlock Text="extended data" TextAlignment="Center" FontFamily="Segoe Print"
-                                            VerticalAlignment="Top"    Margin="13,155,126,0"/>
-
-        <Button Content="Read"          Click="ExReadCl"    FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,154,81,0" Width="45" Height="23"/>
-        <Button Content="Write"         Click="ExWriteCl"   FontFamily="Franklin Gothic" BorderThickness="0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,154,24,0" Width="45" Height="23"/>
-
+        <Border Background="#80d0d6e2" BorderBrush="#80546480" BorderThickness="0.5" CornerRadius="5,5,0,0"
+                                           VerticalAlignment="Top"    Margin="12,147,12,0"           Height="24"/>
 
         <DataGrid Name="datagrid" AutoGenerateColumns="False" CanUserAddRows="True"
+                BeginningEdit="beginningEdit" CellEditEnding="cellEditEnding" Loaded="gridload" CurrentCellChanged="currentCellChanged"
                 HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#fafafa"
                 AlternationCount="2" AlternatingRowBackground="#f8f8f8" RowBackground="#fcfcfc" Background="#f0f0f0" 
-                HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="12,177,12,47">
+                HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="12,171,12,44">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding name}" IsReadOnly="False"/>
-                <DataGridTextColumn Header="Value" Binding="{Binding value}" Width="*"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding name, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False"/>
+                <DataGridTextColumn Header="Value" Binding="{Binding value,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-
-        <!--<Ellipse   Fill="#e0e0e0" Stroke="#909090" StrokeThickness="0.5"                 MouseUp="ExReadCl"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,153,81,0" Width="45" Height="30"/>
-        <TextBlock Text="Read"       TextAlignment="Center" FontFamily="Franklin Gothic" MouseUp="ExReadCl"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,162,81,0" Width="45"/>
-
-        <Ellipse   Fill="#e0e0e0" Stroke="#909090" StrokeThickness="0.5"                 MouseUp="ExWriteCl"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,153,24,0" Width="45" Height="30"/>
-        <TextBlock Text="Write"      TextAlignment="Center" FontFamily="Franklin Gothic" MouseUp="ExWriteCl"
-                HorizontalAlignment="Right" VerticalAlignment="Top"    Margin="0,162,24,0" Width="45"/>-->
     </Grid>
 </UserControl>

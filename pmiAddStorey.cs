@@ -12,102 +12,62 @@ using System.Collections.Specialized;
 
 namespace MyProject1
 {
-    [System.Runtime.InteropServices.Guid("59f0cc43-3019-41ae-b65b-87e1fbadfba3")]
+    [System.Runtime.InteropServices.Guid("c9c45afd-d208-447e-9f1a-8807fadd4668")]
     public class pmiAddStorey : Command
     {
         public pmiAddStorey() { }
         public override string EnglishName { get { return "pmiAddStorey"; } }
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-
             const ObjectType filter = Rhino.DocObjects.ObjectType.AnyObject;
             ObjRef objref = null;
             Result rc = RhinoGet.GetOneObject("choose building", false, filter, out objref);
             if (rc != Result.Success || null == objref)
             {
-                RhinoApp.WriteLine("error: no building chosen");
+                RhinoApp.WriteLine("no building chosen");
                 return rc;
             }
 
-            RhinoObject obj = objref.Object();
-            if (null == obj)
+            string error = ob.verify(objref.Object(), true);
+            if (error != "")
             {
-                RhinoApp.WriteLine("error: invalid building");
+                RhinoApp.WriteLine("pmi: " + error);
                 return Result.Failure;
             }
+            my.db(String.Format("<{0}<  ", EnglishName));
+            my.db(ob.collectinfo());
+            my.storeymode = true;
+            ob.ject.Select(false);
+            ob.ject = doc.Objects.Find(doc.Objects.AddExtrusion(Extrusion.Create(ob.polygon.ToNurbsCurve(), ob.height * ob.vector, true), attribstorey()));
+            if (!my.automatic) { ob.ject.Select(true); doc.Views.Redraw(); }
+            my.dbln(String.Format("  >{0}>", EnglishName));
+            return Result.Success;
+        }
 
-            GeometryBase geom = obj.Geometry;
-            Extrusion extr = geom as Extrusion;
-            if (null == extr)
-            {
-                RhinoApp.WriteLine("error: building is no extrusion");
-                return Result.Failure;
-            }
-            obj.Select(false);
-            RhinoApp.Write("<DEBUG(AddStorey)  ");
-            int pos = myp.ids.IndexOf(obj.Id);
-            if (pos != -1)
-            {
-                if (myp.rsn[pos] == obj.RuntimeSerialNumber)
-                {
-                    RhinoApp.Write("unmodified building");
-                }
-                else
-                {
-                    RhinoApp.Write("modified building");
-                }
-            }
-            else
-            {
-                RhinoApp.Write("new building");
-            }
-            
-
-            
-            
-            kmlUserData kud = obj.Attributes.UserData.Find(typeof(kmlUserData)) as kmlUserData;
-            if (null == kud)
-            {
-                RhinoApp.Write(" without kmlUserData selected");
-            
-            }
-            else
-            {
-                if (kud.exda.Count != 0) RhinoApp.Write(" with kmlUserData inclusive of ExtendedData selected");
-                else RhinoApp.Write(" with kmlUserData exclusive of ExtendedData selected");
-            }
-
-            NurbsSurface sur = extr.ToNurbsSurface();
-            double height = sur.Points.GetControlPoint(0, 0).Location.Z - sur.Points.GetControlPoint(0, 1).Location.Z;
-            double elevation = sur.Points.GetControlPoint(0, 1).Location.Z;
-            Polyline polygon = new Polyline();
-            for (int u = 0; u < sur.Points.CountU; u++) polygon.Add(sur.Points.GetControlPoint(u, height < 0.0011 / (myp.degree / myp.cancel) ? 1 : 0).Location);
-
+        public static ObjectAttributes attribstorey()
+        {
             ObjectAttributes attributes = new ObjectAttributes();
-            attributes.Name = obj.Attributes.Name + "-Storey";
-            while (myp.names.Contains(attributes.Name)) { attributes.Name += "-Renamed"; obj.CommitChanges(); }
-            attributes.WireDensity = obj.Attributes.WireDensity;
-            attributes.ObjectColor = obj.Attributes.ObjectColor;
+            attributes.Name = ob.ject.Attributes.Name + "-Storey";
+            while (my.names.Contains(attributes.Name)) { attributes.Name += "-Renamed"; ob.ject.CommitChanges(); }
+            attributes.WireDensity = ob.ject.Attributes.WireDensity;
+            attributes.ObjectColor = ob.ject.Attributes.ObjectColor;
             attributes.ColorSource = ObjectColorSource.ColorFromObject;
-            if (null != kud)
+            if (null != ob.kud)
             {
                 NameValueCollection exdata = new NameValueCollection();
-                exdata.Add("Name", attributes.Name);
-                if (null == kud.exda["Description"]) exdata.Add("Description", "StoreyCreatedOn" + DateTime.Now.ToString("ddMMMyyyy", myp.cult) + "From" + obj.Attributes.Name);
-                foreach (String s in kud.exda.AllKeys) if (s != "Name") exdata.Add(s, kud.exda[s]);
-                attributes.UserData.Add(new kmlUserData(kud.fill, exdata));
+                if (ob.hasexda)
+                {
+                    exdata.Add("Name", attributes.Name);
+                    if (null == ob.kud.exda["Description"]) exdata.Add("Description",
+                        "CreatedOn" + DateTime.Now.ToString("ddMMMyyyy", my.cult) + "From" + ob.ject.Attributes.Name);
+                    foreach (String s in ob.kud.exda.AllKeys) if (s != "Name") exdata.Add(s, ob.kud.exda[s]);
+                }
+                else
+                    exdata = null;
+                attributes.UserData.Add(new kmlUserData(ob.kud.fill, exdata));
             }
-            doc.Objects.AddExtrusion(Extrusion.Create(polygon.ToNurbsCurve(), -height, true), attributes);
-            RhinoApp.WriteLine(", building \"{0}\" is created  (AddStorey)DEBUG>", attributes.Name);
-
-            RhinoObject objstorey = doc.Objects.MostRecentObject();
-            objstorey.Select(true);
-            //myp.knr.Add(-1);
-            //myp.rsn.Add(objstorey.RuntimeSerialNumber);
-            //myp.ids.Add(objstorey.Id);
-
-            doc.Views.Redraw();
-            return Result.Success;
+            my.db(String.Format(", create \"{0}\"", attributes.Name));
+            return attributes;
         }
     }
 }

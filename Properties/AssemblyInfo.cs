@@ -10,7 +10,7 @@ using Rhino.PlugIns;
 [assembly: PlugInDescription(DescriptionType.Email, "askqut@qut.edu.au")]
 [assembly: PlugInDescription(DescriptionType.Phone, "+61 7 3138 2000")]
 [assembly: PlugInDescription(DescriptionType.Fax, "-")]
-[assembly: PlugInDescription(DescriptionType.Organization, "QUT")]
+[assembly: PlugInDescription(DescriptionType.Organization, "Queensland University of Technology")]
 [assembly: PlugInDescription(DescriptionType.UpdateUrl, "https://www.qut.edu.au")]
 [assembly: PlugInDescription(DescriptionType.WebSite, "https://www.qut.edu.au")]
                     
@@ -32,7 +32,7 @@ using Rhino.PlugIns;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("58607b6a-b025-4cba-a192-f45a99b3d805")] // This will also be the Guid of the Rhino plug-in
+[assembly: Guid("4234181f-331c-4655-a5dd-b04be0843cfd")] // This will also be the Guid of the Rhino plug-in
 
 // Version information for an assembly consists of the following four values:
 //
@@ -44,5 +44,5 @@ using Rhino.PlugIns;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.84.*")]
-[assembly: AssemblyFileVersion("0.84.0.0")]
+[assembly: AssemblyVersion("1.00.*")]
+[assembly: AssemblyFileVersion("1.00.0.0")]

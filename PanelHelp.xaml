@@ -8,77 +8,64 @@
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
-    ShowInTaskbar="True">
-    <Grid>
-        
+    Topmost="True"
+    ShowInTaskbar="False">
+    <Window.Resources>
+        <ResourceDictionary Source="PanelStyle.xaml"/>
+    </Window.Resources>
+
+    <Grid Background="#f0f0f0">
         <Image Source="Properties/icon64.png" Stretch="None"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,20,0,0"/>
 
         <TextBlock Text="{DynamicResource about}" FontFamily="Segoe Print" FontSize="18"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="104,20,0,0"/>
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="104,20,24,0"/>
 
         <TextBlock Text="Copyright © 2015 QUT"            FontFamily="Segoe Print" FontSize="14"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="104,48,0,0"/>
 
-        <TextBlock                                                     Margin="300,51,0,0">
-            <Hyperlink FontWeight="Black" FontSize="13" Foreground="Black" RequestNavigate="navHyperlink" 
-                       NavigateUri="https://github.com/jens0/PMI-Rhino-Plug-In"
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,220,40" Width="85" TextAlignment="Center">
+            <Hyperlink RequestNavigate="navHyperlink" NavigateUri=
+                       "https://github.com/jens0/PMI-Rhino-Plug-In/tree/master/bin"
+                       >Newest Version</Hyperlink></TextBlock>
+
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,220,20" Width="85" TextAlignment="Center">
+            <Hyperlink RequestNavigate="navHyperlink" NavigateUri=
+                       "https://github.com/jens0/PMI-Rhino-Plug-In"
                        >Open Source</Hyperlink></TextBlock>
 
-        <TextBlock                                                     Margin="360,260,0,24">
-            <Hyperlink FontWeight="Black" FontSize="10" Foreground="Black" RequestNavigate="navHyperlink"
-                       NavigateUri="https://docs.google.com/document/d/11oQWizfT04INfNOOe_m26P7DU3fUFcLEonoPM_ZCwIk/edit?usp=sharing"
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,125,40" Width="85" TextAlignment="Center">
+            <Hyperlink RequestNavigate="navHyperlink" NavigateUri=
+                       "https://docs.google.com/document/d/11oQWizfT04INfNOOe_m26P7DU3fUFcLEonoPM_ZCwIk/edit?usp=sharing"
                        >Online Help</Hyperlink></TextBlock>
 
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,125,20" Width="85" TextAlignment="Center">
+            <Hyperlink RequestNavigate="navHyperlink" NavigateUri=
+                       "https://docs.google.com/document/d/1JzS6FfufDs0mZ-IOEDPceFs1P1MbQEROwTpsRl6ZyG8/edit?usp=sharing"
+                       >Test Manual</Hyperlink></TextBlock>
+
+        <Button Content="OK"            Click="OK"          FontFamily="Franklin Gothic" IsDefault="True" IsCancel="True"
+                Background="#d0d5df" BorderBrush="#e0e5ef" Foreground="Black" Style="{StaticResource RoundedButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,240,24,18" Width="75" Height="23"/>
+
         <TextBlock FontSize="13" FontWeight="Medium"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,100,0,0"
->prompt / panel / menu commands:</TextBlock>
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,100,0,0">
+            prompt / <Bold>panel</Bold> / menu commands:</TextBlock>
 
+        <TextBlock LineHeight="18" FontFamily="Franklin Gothic"
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,126,0,0">
+            pmi <Italic>(enter in Rhino prompt)</Italic><LineBreak/>
+            <Bold>Open</Bold> / Menu>File>Open<LineBreak/>
+            <Bold>Import</Bold> / Menu>File>Import<LineBreak/>
+            <Bold>Save</Bold><LineBreak/>
+            <Bold>Add Storey</Bold></TextBlock>
 
-        <TextBlock LineHeight="18" xml:space="preserve" FontFamily="Franklin Gothic"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,126,0,0"
->pmi
-pmiOpen / [Open] / File>Open
-pmiImport / [Import] / File>Import
-pmiSave / [Save]
-pmiAddStorey / [Add Storey]
-pmiExtRead / [Read]*
-pmiExtWrite / [Write]
-*show extended data on panel</TextBlock>
-
-
-        <TextBlock LineHeight="18" xml:space="preserve" FontWeight="Medium"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="220,124,24,0"
->toggle panel of pmi plug-in
-open kml file
-import kml file
-save kml file
-add storey to building
-read ext. data of building into buffer
-write ext. data from buffer to building</TextBlock>
-
-
-        <!--<ResourceDictionary>
-            <BitmapImage x:Key="MyImageSource" UriSource="Properties/icon64.png" />
-        </ResourceDictionary>
-        <Image Source="{StaticResource MyImageSource}" />-->
-
-        <!--<Image Source="/PMI;component/Properties/icon64.png" />-->
-
-        <!--<Image Source="ms-appdata:///local\Properties\icon64.png" />-->
-
-        <!--<Image>
-            <Image.Source>
-                ImageSource="pack://MyProject1:,,,/Resources/icon64.png"
-            </Image.Source>
-        </Image>-->
-
-                <!--<Image
-	    HorizontalAlignment="Left"
-	    Height="100"
-	    Margin="10,10,0,0"
-	    VerticalAlignment="Top"
-	    Width="100"
-	    Loaded="Image_Loaded"/>-->
+        <TextBlock LineHeight="18" FontWeight="Medium"
+                HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="220,124,0,0">
+            toggle panel of pmi plug-in<LineBreak/>
+            open kml file<LineBreak/>
+            import kml file<LineBreak/>
+            save kml file<LineBreak/>
+            add storey to building</TextBlock>
     </Grid>
 </Window>
