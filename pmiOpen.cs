@@ -9,6 +9,8 @@ using Rhino.Commands;
 using Rhino.Display;
 using System.Drawing;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace MyProject1
 {
@@ -62,7 +64,7 @@ namespace MyProject1
 
         public static bool automatic = true;
         public static bool showasterisk = false;
-        public static bool showdebug = false;
+        public static bool showdebug = true;
         public static bool colorbytype = false;
         public static bool setelevation = false;
         public static double newelevation = 0;
@@ -237,6 +239,11 @@ namespace MyProject1
             Point3d pt1, pt2, ptcentroid;
             pt1 = pt2 = ptcentroid = Point3d.Origin;
             bool zeroset = my.initeapzero(doc);
+            if (my.automatic)
+            {
+                ob.ject = null;
+                //..
+            }
 
             if (my.showdebug)
             {
@@ -260,7 +267,7 @@ namespace MyProject1
             foreach (XmlNode placemark in kml.GetElementsByTagName("Placemark"))
             {
                 string name = "Unnamed";
-                Color color = colorbytype ? Color.FromArgb(0xfccde5) : Color.Black;
+                Color color = colorbytype ? Color.FromArgb(0xfccde5) : Color.White;
                 string pyfill = null;
                 NameValueCollection exdata = new NameValueCollection();
                 double height = 0;
@@ -278,75 +285,109 @@ namespace MyProject1
                             break;
 
                         case "Style":
-                            if (element.FirstChild.Name == "LineStyle")
-                                if (!colorbytype)
-                                    color = Color.FromArgb(int.Parse(element.FirstChild.FirstChild.InnerText, System.Globalization.NumberStyles.AllowHexSpecifier));
-                            if (element.LastChild.Name == "PolyStyle")
-                                pyfill = element.LastChild.FirstChild.InnerText;
-                            break;
-
-                        case "ExtendedData":
-                            if ((element.HasChildNodes) && (element.FirstChild.Name == "SchemaData"))
-                                foreach (XmlNode simpledata in element.FirstChild)
+                            foreach (XmlNode style in element)
+                                switch (style.Name)
                                 {
-                                    my.gridrow i = new my.gridrow
-                                    {
-                                        name = simpledata.Attributes.Item(0).InnerText,
-                                        value = simpledata.InnerText
-                                    };
-                                    if ((i.name != "") && (!my.extnames.Contains(i.name)) || i.value != "")
-                                        exdata.Add(i.name, i.value);
-                                    switch (i.name)
-                                    {
-                                        case "Name":
-                                            name = i.value;
-                                            while (names.Contains(name)) name += "-Renamed";
-                                            names.Add(name);
-                                            break;
-                                        case "Type":
-                                            if (colorbytype)
-                                                foreach (KeyValuePair<string, int> typ in buildingtype)
-                                                    if (typ.Key == i.value)
-                                                        color = Color.FromArgb(typ.Value);
-                                            break;
-                                        case "Height":
-                                            height = double.Parse(i.value, cult) / my.meter;
-                                            break;
-                                        case "Elevation":
-                                            elevation += double.Parse(i.value, cult) / my.meter;
-                                            break;
-                                    }
+                                    case "LineStyle":
+                                        if (!colorbytype)
+                                            foreach (XmlNode child in style)
+                                                if (child.Name == "color")
+                                                {
+                                                    int argb;
+                                                    if (int.TryParse(child.InnerText, NumberStyles.AllowHexSpecifier, cult, out argb))
+                                                        color = Color.FromArgb(argb);
+                                                }
+                                        break;
+                                    case "PolyStyle":
+                                        foreach (XmlNode child in style)
+                                            if (child.Name == "fill")
+                                                pyfill = child.InnerText;
+                                        break;
                                 }
                             break;
 
+                        case "ExtendedData":
+                            if (element.HasChildNodes && element.LastChild.Name == "SchemaData")
+                                foreach (XmlNode simpledata in element.LastChild)
+                                    if (simpledata.Attributes.Count == 1 && simpledata.Attributes.Item(0).Name == "name")
+                                    {
+                                        my.gridrow i = new my.gridrow
+                                        {
+                                            name = simpledata.Attributes.Item(0).InnerText,
+                                            value = simpledata.InnerText
+                                        };
+                                        if ((i.name != "") && (!my.extnames.Contains(i.name)) || i.value != "")
+                                            exdata.Add(i.name, i.value);
+                                        switch (i.name)
+                                        {
+                                            case "Name":
+                                                name = i.value;
+                                                while (names.Contains(name)) name += "-Renamed";
+                                                names.Add(name);
+                                                break;
+                                            case "Type":
+                                                if (colorbytype)
+                                                    foreach (KeyValuePair<string, int> typ in buildingtype)
+                                                        if (typ.Key == i.value)
+                                                            color = Color.FromArgb(typ.Value);
+                                                break;
+                                            case "Height":
+                                                double _height;
+                                                if (double.TryParse(i.value, NumberStyles.Float, cult, out _height))
+                                                    height = _height / my.meter;
+                                                break;
+                                            case "Elevation":
+                                                double _elevation;
+                                                if (double.TryParse(i.value, NumberStyles.Float, cult, out _elevation))
+                                                    elevation += _elevation / my.meter;
+                                                break;
+                                        }
+                                    }
+                            break;
+
                         case "Polygon":
-                            polyfound = element.LastChild.LastChild.LastChild.Name == "coordinates";
-                            if (polyfound)
-                                foreach (string xy in element.LastChild.LastChild.LastChild.InnerText.Split(' '))
+                            bool hascoordinates = false;
+                            try
+                            { hascoordinates = element.LastChild.LastChild.LastChild.Name == "coordinates"; }
+                            catch (NullReferenceException)
+                            { my.db(String.Format("__NullReferenceException:\"{0}\"", name)); }
+                            catch (Exception)
+                            { my.db(String.Format("__Exception:\"{0}\"", name)); }
+                            if (hascoordinates)
+                                foreach (string xy in Regex.Replace(element.LastChild.LastChild.LastChild.InnerText, "[\x00-\x2a]+", " ").Trim(' ').Split(' '))
                                 {
-                                    Point3d pt = Point3d.Origin;
                                     string[] x_and_y = xy.Split(',');
-                                    for (int i = 0; i < x_and_y.Length; i++) pt[i] = double.Parse(x_and_y[i], cult);
-                                    if (!zeroset)
+                                    if (x_and_y.Length == 2 || x_and_y.Length == 3)
                                     {
-                                        eap.EarthBasepointLongitude = zero.X = pt.X;
-                                        eap.EarthBasepointLatitude = zero.Y = pt.Y;
-                                        eap.EarthBasepointElevation = zero.Z = 0;
+                                        Point3d pt = Point3d.Origin;
+                                        for (int i = 0; i < x_and_y.Length; i++)
+                                        {
+                                            double coordinate;
+                                            if (double.TryParse(x_and_y[i], NumberStyles.Float, cult, out coordinate))
+                                                pt[i] = coordinate;
+                                        }
+                                        if (!zeroset)
+                                        {
+                                            eap.EarthBasepointLongitude = zero.X = pt.X;
+                                            eap.EarthBasepointLatitude = zero.Y = pt.Y;
+                                            eap.EarthBasepointElevation = zero.Z = 0;
+                                        }
+                                        pt.X = (pt.X - zero.X) * my.degreex / my.meter * Math.Cos(zero.Y * (Math.PI / 180.0));
+                                        pt.Y = (pt.Y - zero.Y) * my.degreey / my.meter;
+                                        //if (x_and_y.Length == 2) pt.Z = elevation;
+                                        polygon.Add(pt);
+                                        if (polygon.Count >= 2) polyfound = true;
+                                        if (!zeroset)
+                                        {
+                                            zeroset = true;
+                                            pt1.X = pt2.X = pt.X;
+                                            pt1.Y = pt2.Y = pt.Y;
+                                        }
+                                        if (pt.X < pt1.X) pt1.X = pt.X;
+                                        if (pt.X > pt2.X) pt2.X = pt.X;
+                                        if (pt.Y < pt1.Y) pt1.Y = pt.Y;
+                                        if (pt.Y > pt2.Y) pt2.Y = pt.Y;
                                     }
-                                    pt.X = (pt.X - zero.X) * my.degreex / my.meter * Math.Cos(zero.Y * (Math.PI / 180.0));
-                                    pt.Y = (pt.Y - zero.Y) * my.degreey / my.meter;
-                                    //if (x_and_y.Length == 2) pt.Z = elevation;
-                                    polygon.Add(pt);
-                                    if (!zeroset)
-                                    {
-                                        zeroset = true;
-                                        pt1.X = pt2.X = pt.X;
-                                        pt1.Y = pt2.Y = pt.Y;
-                                    }
-                                    if (pt.X < pt1.X) pt1.X = pt.X;
-                                    if (pt.X > pt2.X) pt2.X = pt.X;
-                                    if (pt.Y < pt1.Y) pt1.Y = pt.Y;
-                                    if (pt.Y > pt2.Y) pt2.Y = pt.Y;
                                 }
                             break;
                     }
@@ -461,9 +502,9 @@ namespace MyProject1
         protected override Rhino.PlugIns.LoadReturnCode OnLoad(ref string errorMessage)
         {
             Rhino.UI.Panels.RegisterPanel(this, typeof(PanelHost), "PMI", Icon.FromHandle(MyProject1.Properties.Resources.icon16.GetHicon()));
-            about = String.Format("PMI Rhino Plug-In, Version {0}.{1}",
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major.ToString(),
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString());
+            about = String.Format("PMI Rhino Plug-In, Version {0}.{1:00}",
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major,
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor);
             RhinoApp.WriteLine(about + " loaded, enter \"pmi\" to toggle panel");
             return Rhino.PlugIns.LoadReturnCode.Success;
         }
