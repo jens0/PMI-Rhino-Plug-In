@@ -62,9 +62,13 @@ namespace MyProject1
             return result;
         }
 
+#if underconstruction
+        public static bool showdebug = true;
+#else
+        public static bool showdebug = false;
+#endif
         public static bool automatic = true;
         public static bool showasterisk = false;
-        public static bool showdebug = true;
         public static bool colorbytype = false;
         public static bool setelevation = false;
         public static double newelevation = 0;
@@ -143,11 +147,15 @@ namespace MyProject1
         }
         public static void note(String s)
         {
+#if underconstruction
             //if (my.showdebug) RhinoApp.Write(s);
+#endif
         }
         public static void noteln(String s)
         {
+#if underconstruction
             //if (my.showdebug) RhinoApp.WriteLine(s);
+#endif
         }
 
         public static bool ismeterinit = false;
@@ -374,6 +382,7 @@ namespace MyProject1
                                         }
                                         pt.X = (pt.X - zero.X) * my.degreex / my.meter * Math.Cos(zero.Y * (Math.PI / 180.0));
                                         pt.Y = (pt.Y - zero.Y) * my.degreey / my.meter;
+                                        if (x_and_y.Length == 3) pt.Z /= my.meter;
                                         //if (x_and_y.Length == 2) pt.Z = elevation;
                                         polygon.Add(pt);
                                         if (polygon.Count >= 2) polyfound = true;
@@ -395,33 +404,41 @@ namespace MyProject1
 
                 if (polyfound)
                 {
-                    if (!finekmlfile) { pt1.Z = pt2.Z = elevation; finekmlfile = true; }
-                    if (elevation < pt1.Z) pt1.Z = elevation;
-                    if (elevation + height > pt2.Z) pt2.Z = elevation + height;
-                    ptcentroid.X += polygon.First.X;
-                    ptcentroid.Y += polygon.First.Y;
-                    ptcentroid.Z += elevation + height / 2;
-
                     for (int p = 0; p < polygon.Count; p++) // add elevation only here
                         polygon[p] = new Point3d(polygon[p].X, polygon[p].Y, polygon[p].Z + elevation);
 
                     if (polygon.First != polygon.Last) polygon.Add(polygon.First); // if not closed, close it
 
                     double area = 0; // calc area to get vector
+                    double z1, z2; z1 = z2 = polygon.First.Z;
                     for (int p = 0; p < polygon.Count - 1; p++)
+                    {
                         area += polygon[p].X * polygon[p + 1].Y - polygon[p + 1].X * polygon[p].Y;
+                        if (polygon[p].Z < z1) z1 = polygon[p].Z;
+                        if (polygon[p].Z > z2) z2 = polygon[p].Z;
+                    }
                     int vector = area >= 0 ? 1 : -1;
+
+                    if (!finekmlfile) { pt1.Z = pt2.Z = z1; finekmlfile = true; }
+                    if (z1 < pt1.Z) pt1.Z = z1;
+                    if (z2 + height > pt2.Z) pt2.Z = z2 + height;
+                    ptcentroid.X += polygon.First.X;
+                    ptcentroid.Y += polygon.First.Y;
+                    ptcentroid.Z += elevation + (height + z2 - z1) / 2; 
 
                     ObjectAttributes attributes = new ObjectAttributes();
                     if (exdata.Count == 0) exdata = null;
                     if (null != pyfill || null != exdata)
                         attributes.UserData.Add(new kmlUserData(pyfill, exdata));
                     attributes.Name = name;
-                    attributes.ObjectColor = color;
+                    attributes.ObjectColor = (z1 == z2) ? color : Color.Red;
                     attributes.ColorSource = ObjectColorSource.ColorFromObject;
                     attributes.WireDensity = -1;
                     if (height == 0) height = 0.001 / my.meter;
-                    ids.Add(doc.Objects.AddExtrusion(Extrusion.Create(polygon.ToNurbsCurve(), height * vector, true), attributes));
+                    if (z1 == z2)
+                        ids.Add(doc.Objects.AddExtrusion(Extrusion.Create(polygon.ToNurbsCurve(), height * vector, true), attributes));
+                    else
+                        ids.Add(doc.Objects.AddSurface(Extrusion.CreateExtrusion(polygon.ToNurbsCurve(), new Vector3d(0, 0, height)), attributes));
                     rsn.Add(doc.Objects.Find(ids[ids.Count - 1]).RuntimeSerialNumber);
                     knr.Add(totalplacemarks);
                 }
