@@ -22,7 +22,7 @@ using Rhino.PlugIns;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("QUT")]
 [assembly: AssemblyProduct("PMI Rhino Plug-In")]
-[assembly: AssemblyCopyright("Copyright © 2015")]
+[assembly: AssemblyCopyright("Copyright © 2015-2016")]
 [assembly: AssemblyTrademark("Open Source")]
 [assembly: AssemblyCulture("")]
 
@@ -44,5 +44,5 @@ using Rhino.PlugIns;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.02.*")]
-[assembly: AssemblyFileVersion("1.02.0.0")]
+[assembly: AssemblyVersion("1.03.*")]
+[assembly: AssemblyFileVersion("1.03.0.0")]

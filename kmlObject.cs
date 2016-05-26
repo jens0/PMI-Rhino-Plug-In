@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 
 
 
@@ -72,14 +72,14 @@ namespace MyProject1
                 vector = 1;
                 elevation = z0;
                 height = z1 - z0;
-                polygon = top && height > 0.0011 ? polygon1 : polygon0;
+                polygon = top && height > 0.0101 ? polygon1 : polygon0;
             }
             else
             { // clockwise tonsley polygons
                 vector = -1;
                 elevation = z1;
                 height = z0 - z1;
-                polygon = top && height > 0.0011 ? polygon0 : polygon1;
+                polygon = top && height > 0.0101 ? polygon0 : polygon1;
             }
 
             center.X /= area * 3;

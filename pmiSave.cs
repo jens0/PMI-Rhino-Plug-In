@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 using System;
 using System.Xml;
 using System.Collections.Generic;
@@ -251,7 +251,7 @@ namespace MyProject1
                             extendeddata.FirstChild.RemoveChild(extendeddata.FirstChild.FirstChild);
                     ob.collectinfo();
                     if (ob.hasexda || my.createname || my.creategeom
-                        || ob.elevation * my.meter + my.zero.Z != 0 || ob.height * my.meter >= 0.0011)
+                        || ob.elevation * my.meter + my.zero.Z != 0 || ob.height * my.meter >= 0.0101)
                     {
                         if (schema_childs == -1)
                         {
@@ -274,10 +274,17 @@ namespace MyProject1
                             }
                         }
 
-                        string s = "";
                         double levels = 1;
-                        if (ob.hasexda && null != (s = ob.kud.exda["Levels"]))
-                            levels = double.Parse(s, my.cult);
+                        if (ob.hasexda)
+                        {
+                            string s = ob.kud.exda["Levels"];
+                            if (!string.IsNullOrWhiteSpace(s))
+                            {
+                                double _levels;
+                                if (double.TryParse(s, System.Globalization.NumberStyles.Float, my.cult, out _levels))
+                                    levels = _levels;
+                            }
+                        }
                         double area = ob.area * my.meter * my.meter;
                         foreach (String name in my.extnames)
                         {
@@ -291,8 +298,8 @@ namespace MyProject1
                                         value = area.ToString("F2", my.cult); break;
                                 case "GFA": if (value != "" && my.updategeom || my.creategeom)
                                         value = (area * levels).ToString("F0", my.cult) + " m2"; break;
-                                case "Height": if (value != "" || ob.height * my.meter >= 0.0011)
-                                        value = ob.height * my.meter < 0.0011 ? "0" : (ob.height * my.meter).ToString("G14", my.cult); break;
+                                case "Height": if (value != "" || ob.height * my.meter >= 0.0101)
+                                        value = ob.height * my.meter < 0.0101 ? "0" : (ob.height * my.meter).ToString("G14", my.cult); break;
                                 case "Elevation": if (value != "" || ob.elevation * my.meter + my.zero.Z != 0)
                                         value = (ob.elevation * my.meter + my.zero.Z).ToString("G13", my.cult); break;
                                 case "Perimeter": if (value != "" && my.updategeom || my.creategeom)

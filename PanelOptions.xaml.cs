@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +33,7 @@ namespace MyProject1
         static public bool setelevation { get; set; }
         static public double newelevation { get; set; }
         static public double newmelevation { get; set; }
+        static public bool? topography { get; set; }
         static public bool setdisplaymode { get; set; }
         static public bool setzoom { get; set; }
         static public bool? createname { get; set; }

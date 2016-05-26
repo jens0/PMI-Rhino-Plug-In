@@ -1,4 +1,4 @@
-﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015 QUT -->
+﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT -->
 <Window
     x:Class="MyProject1.PanelHelp"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -18,10 +18,10 @@
         <Image Source="Properties/icon64.png" Stretch="None"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,20,0,0"/>
 
-        <TextBlock Text="{DynamicResource about}" FontFamily="Segoe Print" FontSize="18"
+        <TextBlock Text="{DynamicResource about}"           FontFamily="Segoe Print" FontSize="18"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="104,20,24,0"/>
 
-        <TextBlock Text="Copyright © 2015 QUT"            FontFamily="Segoe Print" FontSize="14"
+        <TextBlock Text="Copyright © 2015-2016 QUT"         FontFamily="Segoe Print" FontSize="14"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="104,48,0,0"/>
 
         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,220,40" Width="85" TextAlignment="Center">
@@ -54,15 +54,15 @@
 
         <TextBlock LineHeight="18" FontFamily="Franklin Gothic"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="24,126,0,0">
-            pmi <Italic>(enter in Rhino prompt)</Italic><LineBreak/>
-            <Bold>Open</Bold> / Menu>File>Open<LineBreak/>
-            <Bold>Import</Bold> / Menu>File>Import<LineBreak/>
+            pmi <Italic>(enter in rhino prompt)</Italic><LineBreak/>
+            <Bold>Open</Bold> / Menu>File>Open...<LineBreak/>
+            <Bold>Import</Bold> / Menu>File>Import...<LineBreak/>
             <Bold>Save</Bold><LineBreak/>
             <Bold>Add Storey</Bold></TextBlock>
 
         <TextBlock LineHeight="18" FontWeight="Medium"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"    Margin="220,124,0,0">
-            toggle panel of pmi plug-in<LineBreak/>
+            show panel of pmi plug-in<LineBreak/>
             open kml file<LineBreak/>
             import kml file<LineBreak/>
             save kml file<LineBreak/>

@@ -1,5 +1,5 @@
 PMI Rhino Plug-In
-Copyright (c) 2015 QUT
+Copyright (c) 2015-2016 QUT
 
 check out
 https://github.com/jens0/PMI-Rhino-Plug-In
@@ -9,15 +9,15 @@ https://github.com/jens0/PMI-Rhino-Plug-In
 
 This plug-in is compatible to Rhino Version 5 SR11 (26.02.2015) or better.
 After installation via Rhino's plug-in manager,
-enter "pmi" in the Rhino command prompt to switch on the pmi panel.
-For quick help, click on the Help button there.
+enter "pmi" in the Rhino command prompt to show the PMI panel.
+For quick help, click the Help button in the panel.
 
 
 == LICENSE
 
 (BSD 3-Clause License)
 
-Copyright (c) 2015, Regents of the Queensland University of Technology
+Copyright (c) 2015-2016, Regents of the Queensland University of Technology
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 using System;
 
 using System.Collections.Generic;

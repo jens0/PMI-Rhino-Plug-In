@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 using System;
 using System.Xml;
 using System.Collections.Generic;
@@ -72,6 +72,8 @@ namespace MyProject1
         public static bool colorbytype = false;
         public static bool setelevation = false;
         public static double newelevation = 0;
+        public static bool fittopo = true;
+        public static bool indivtopo = true;
         public static bool setdisplaymode = true;
         public static bool setzoom = true;
         public static bool createname = false;
@@ -424,7 +426,7 @@ namespace MyProject1
                     if (z2 + height > pt2.Z) pt2.Z = z2 + height;
                     ptcentroid.X += polygon.First.X;
                     ptcentroid.Y += polygon.First.Y;
-                    ptcentroid.Z += elevation + (height + z2 - z1) / 2; 
+                    ptcentroid.Z += elevation + (height + z2 - z1) / 2;
 
                     ObjectAttributes attributes = new ObjectAttributes();
                     if (exdata.Count == 0) exdata = null;
@@ -434,7 +436,7 @@ namespace MyProject1
                     attributes.ObjectColor = (z1 == z2) ? color : Color.Red;
                     attributes.ColorSource = ObjectColorSource.ColorFromObject;
                     attributes.WireDensity = -1;
-                    if (height == 0) height = 0.001 / my.meter;
+                    if (height == 0) height = 0.010 / my.meter;
                     if (z1 == z2)
                         ids.Add(doc.Objects.AddExtrusion(Extrusion.Create(polygon.ToNurbsCurve(), height * vector, true), attributes));
                     else
@@ -444,6 +446,38 @@ namespace MyProject1
                 }
                 totalplacemarks++;
             }
+
+            int topo_current = 0; // fit topography
+            int topo_translated = 0;
+            double zmax = 0;
+            Rhino.DocObjects.ObjectEnumeratorSettings brep_mesh = new Rhino.DocObjects.ObjectEnumeratorSettings();
+            brep_mesh.ObjectTypeFilter = Rhino.DocObjects.ObjectType.Brep | Rhino.DocObjects.ObjectType.Mesh;
+
+            IEnumerable<RhinoObject> rhinotopo = doc.Objects.GetObjectList(brep_mesh);
+            foreach (RhinoObject obj in rhinotopo)
+            {
+                BoundingBox bbox = obj.Geometry.GetBoundingBox(true);
+                double zdistance = pt1.Z - bbox.Max.Z;
+                if (zmax > zdistance) zmax = zdistance;
+            }
+
+            List<Guid> translated = new List<Guid>();
+            rhinotopo = doc.Objects.GetObjectList(brep_mesh);
+            foreach (RhinoObject obj in rhinotopo)
+            {
+                BoundingBox bbox = obj.Geometry.GetBoundingBox(true);
+                double zdistance = pt1.Z - bbox.Max.Z;
+                my.note(String.Format(my.cult, "__topo({0}): {1:F3} - {2:F3} = {3:F3}", obj.ObjectType, pt1.Z, bbox.Max.Z, zdistance));
+                if (!my.indivtopo) zdistance = zmax;
+                if (my.fittopo)
+                {
+                    Transform xform = Rhino.Geometry.Transform.Translation(0, 0, zdistance);
+                    translated.Add(doc.Objects.Transform(obj, xform, true));
+                    topo_translated++;
+                }
+                topo_current++;
+            }
+            if (topo_current != 0) my.db("__Topographies(Fitted):" + topo_current + "(" + topo_translated + ")");
 
             ptcentroid.X /= ids.Count; // centroid point not used
             ptcentroid.Y /= ids.Count;
@@ -456,48 +490,55 @@ namespace MyProject1
             pt1.X = ptmean.X; pt2.X = ptmean.X;
             pt1.Y = ptmean.Y; pt2.Y = ptmean.Y;
             pt1.Z = pt1.Z - 20 / my.meter; pt2.Z = pt2.Z + 20 / my.meter;
-            BoundingBox box = new BoundingBox(pt1, pt2);
-            //doc.Objects.AddBrep(box.ToBrep());
+            BoundingBox zoombox = new BoundingBox(pt1, pt2);
 
             if (finekmlfile)
             {
                 DisplayModeDescription dmd;
                 foreach (RhinoView view in doc.Views.GetViewList(true, false))
-                    switch (view.ActiveViewport.Name)
+                {
+                    Vector3d cam = view.ActiveViewport.CameraDirection;
+                    if (view.ActiveViewport.IsPerspectiveProjection) //"Perspective"
                     {
-                        case "Perspective":
-                            if (setdisplaymode)
-                            {
-                                dmd = DisplayModeDescription.FindByName("Rendered");
-                                if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
-                            }
-                            if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomExtents();
-                            break;
-                        case "Top":
-                            if (setdisplaymode)
-                            {
-                                dmd = DisplayModeDescription.FindByName("X-Ray");
-                                if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
-                            }
-                            if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomExtents();
-                            break;
-                        case "Front":
-                            if (setdisplaymode)
-                            {
-                                dmd = DisplayModeDescription.FindByName("Artistic");
-                                if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
-                            }
-                            if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomBoundingBox(box);
-                            break;
-                        case "Right":
-                            if (setdisplaymode)
-                            {
-                                dmd = DisplayModeDescription.FindByName("Artistic");
-                                if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
-                            }
-                            if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomBoundingBox(box);
-                            break;
+                        if (setdisplaymode)
+                        {
+                            dmd = DisplayModeDescription.FindByName("Rendered");
+                            if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
+                        }
+                        if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomExtents();
                     }
+                    else
+                        if (view.ActiveViewport.IsParallelProjection)
+                        {
+                            if (cam.X == 0 && cam.Y == 0) //"Top"
+                            {
+                                if (setdisplaymode)
+                                {
+                                    dmd = DisplayModeDescription.FindByName("X-Ray");
+                                    if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
+                                }
+                                if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomExtents();
+                            }
+                            if (cam.X == 0 && cam.Z == 0) //"Front"
+                            {
+                                if (setdisplaymode)
+                                {
+                                    dmd = DisplayModeDescription.FindByName("Artistic");
+                                    if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
+                                }
+                                if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomBoundingBox(zoombox);
+                            }
+                            if (cam.Y == 0 && cam.Z == 0) //"Right"
+                            {
+                                if (setdisplaymode)
+                                {
+                                    dmd = DisplayModeDescription.FindByName("Artistic");
+                                    if (null != dmd) view.ActiveViewport.DisplayMode = dmd;
+                                }
+                                if (setzoom && !options.ImportMode) view.ActiveViewport.ZoomBoundingBox(zoombox);
+                            }
+                        }
+                }
                 doc.EarthAnchorPoint = my.eap;
             }
             //view.ClientToScreen//view.ScreenRectangle//view.ActiveViewport.Bounds
@@ -522,7 +563,7 @@ namespace MyProject1
             about = String.Format("PMI Rhino Plug-In, Version {0}.{1:00}",
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major,
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor);
-            RhinoApp.WriteLine(about + " loaded, enter \"pmi\" to toggle panel");
+            RhinoApp.WriteLine(about + " loaded, enter \"pmi\" to show panel");
             return Rhino.PlugIns.LoadReturnCode.Success;
         }
     }

@@ -1,4 +1,4 @@
-﻿// PMI Rhino Plug-In, Copyright (c) 2015 QUT
+﻿// PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -314,6 +314,9 @@ namespace MyProject1
             PanelOptions.initslider = PanelOptions.newmelevation != 0;
             PanelOptions.dragstarted = false;
             PanelOptions.mouseleftbuttondown = false; // elevation stuff-->
+            if (my.indivtopo) PanelOptions.topography = null;
+            else if (my.fittopo) PanelOptions.topography = true;
+            else PanelOptions.topography = false;
             PanelOptions.setdisplaymode = my.setdisplaymode;
             PanelOptions.setzoom = my.setzoom;
             if (my.createname) PanelOptions.createname = true;
@@ -361,6 +364,9 @@ namespace MyProject1
                 my.colorbytype = PanelOptions.colorbytype;
                 my.setelevation = PanelOptions.setelevation;
                 my.newelevation = PanelOptions.newelevation;
+                if (PanelOptions.topography == true) { my.fittopo = true; my.indivtopo = false; }
+                else if (PanelOptions.topography == null) { my.fittopo = true; my.indivtopo = true; }
+                else { my.fittopo = false; my.indivtopo = false; }
                 my.setdisplaymode = PanelOptions.setdisplaymode;
                 my.setzoom = PanelOptions.setzoom;
                 if (PanelOptions.createname == true) { my.createname = true; my.updatename = true; }
@@ -414,7 +420,7 @@ namespace MyProject1
             removefxpoly();
             my.fxdrawn = true;
 
-            double height = ob.height * my.meter < 0.0011 ? 0 : ob.height * my.meter;
+            double height = ob.height * my.meter < 0.0101 ? 0 : ob.height * my.meter;
             double perimeter = ob.polygon.Length * my.meter;
             double area = ob.area * my.meter * my.meter;
             string unit = "m "; if (perimeter < 10000) { perimeter *= 1000; unit = "mm"; }

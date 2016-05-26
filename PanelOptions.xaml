@@ -1,4 +1,4 @@
-﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015 QUT -->
+﻿<!-- PMI Rhino Plug-In, Copyright (c) 2015-2016 QUT -->
 <Window
     x:Class="MyProject1.PanelOptions"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -46,7 +46,7 @@
             </CheckBox>
             <!--show debug-->
             <CheckBox  Margin="5,0,0,25"   IsChecked="{Binding showdebug}"    ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
-                       Style="{StaticResource CheckBoxStyle}" Content="show debug" ToolTip="provide information for further diagnostics in the rhino prompt."/>
+                       Style="{StaticResource CheckBoxStyle}" Content="show debug" ToolTip="provide information for further diagnostics in rhino prompt."/>
 
             <TextBlock Text="        open/import kml file"      FontFamily="Segoe Print" Background="#f8f8f8"/>
             <!--color by land use type-->
@@ -99,6 +99,32 @@
                        ContentStringFormat="{}{0:F2} m"/>
                 </Slider.ToolTip>-->
             </Slider>
+            <!--fit topography-->
+            <CheckBox  Margin="5,0,0,0"    IsChecked="{Binding topography}"   ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
+                       Style="{StaticResource CheckBoxStyle}" IsThreeState="True" Content="fit topography">
+                <CheckBox.ToolTip>
+                    <StackPanel>
+                        <TextBlock>
+                            <Italic>checked:</Italic> place topography objects uniformly below kml objects.<LineBreak/>
+                            <Italic>intermediate:</Italic> place topography objects individually straight below kml objects.<LineBreak/>
+                            <Italic>unchecked:</Italic> no relocation of topography.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,5,0,1"/>
+                        <TextBlock>
+                            <Italic>note:</Italic> for use, <Italic>first</Italic> open/import topography file, <Italic>then</Italic> import kml file.<LineBreak/>
+                            <Italic>note:</Italic> pmi takes rhino <Italic>brep</Italic> and <Italic>mesh</Italic> objects as topography objects.<LineBreak/>
+                            <Italic>note:</Italic> this option is not used for kml file <Italic>open</Italic>.
+                        </TextBlock>
+                        <WrapPanel>
+                            <TextBlock xml:space="preserve"><Italic>info:</Italic> </TextBlock>
+                            <TextBlock>
+                                some topographies like sketchup topographies do not provide<LineBreak/>
+                                information about the elevation and therefor this option is made.
+                            </TextBlock>
+                        </WrapPanel>
+                    </StackPanel>
+                </CheckBox.ToolTip>
+            </CheckBox>
             <!--proper display modes-->
             <CheckBox  Margin="5,0,0,0"  IsChecked="{Binding setdisplaymode}" ToolTipService.ShowDuration="60000" HorizontalAlignment="Left"
                        Style="{StaticResource CheckBoxStyle}" Content="proper display modes">
